@@ -80,6 +80,18 @@ app.post('/api/lookup', async (req, res) => {
   res.json({ found: true, product: inserted.rows[0] });
 });
 
+app.get('/api/export/csv', async (req, res) => {
+  const result = await pool.query(
+    'SELECT barcode, name, brand, category, description, image_url, first_scanned_at, scan_count FROM products ORDER BY first_scanned_at DESC'
+  );
+  const cols = ['barcode', 'name', 'brand', 'category', 'description', 'image_url', 'first_scanned_at', 'scan_count'];
+  const escape = v => v == null ? '' : '"' + String(v).replace(/"/g, '""') + '"';
+  const lines = [cols.join(','), ...result.rows.map(r => cols.map(c => escape(r[c])).join(','))];
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="products.csv"');
+  res.send(lines.join('\r\n'));
+});
+
 const PORT = process.env.PORT || 3000;
 initDb()
   .then(() => app.listen(PORT, () => console.log(`Listening on ${PORT}`)))

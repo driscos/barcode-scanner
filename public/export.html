@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Export Data</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f1117;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header a {
+      color: #7c8cf8;
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    main {
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: #1a1d27;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label { font-size: 14px; color: #8a8fa8; }
+    .stat-value { font-size: 32px; font-weight: 700; color: #f0f0f5; }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      background: #7c8cf8;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .btn:active { background: #6070e8; }
+    .btn.secondary { background: #1a1d27; color: #c0c0d0; }
+    .btn.secondary:active { background: #22263a; }
+
+    .info {
+      font-size: 13px;
+      color: #5a5f75;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/">← Back</a>
+    <h1>Export Data</h1>
+  </header>
+
+  <main>
+    <div class="stat-card">
+      <div>
+        <div class="stat-label">Products saved</div>
+        <div class="stat-value" id="count">—</div>
+      </div>
+    </div>
+
+    <a href="/api/export/csv" class="btn" download="products.csv">
+      Download CSV
+    </a>
+
+    <a href="/" class="btn secondary">Scan More</a>
+
+    <p class="info">
+      CSV includes barcode, name, brand, category, description,<br>
+      image URL, first scanned date, and scan count.
+    </p>
+  </main>
+
+  <script>
+    fetch('/api/export/csv')
+      .then(r => r.text())
+      .then(csv => {
+        const lines = csv.trim().split('\n');
+        document.getElementById('count').textContent = Math.max(0, lines.length - 1);
+      })
+      .catch(() => {
+        document.getElementById('count').textContent = '?';
+      });
+  </script>
+</body>
+</html>

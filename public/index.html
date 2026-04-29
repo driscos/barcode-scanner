@@ -21,11 +21,21 @@
     header {
       width: 100%;
       padding: 16px 20px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-size: 18px;
       font-weight: 600;
       letter-spacing: 0.5px;
       color: #e0e0e0;
+    }
+
+    header a {
+      font-size: 13px;
+      font-weight: 500;
+      color: #7c8cf8;
+      text-decoration: none;
+      letter-spacing: 0;
     }
 
     #scanner-container {
@@ -89,7 +99,10 @@
   </style>
 </head>
 <body>
-  <header>Barcode Scanner</header>
+  <header>
+    <span>Barcode Scanner</span>
+    <a href="/export.html">Export</a>
+  </header>
 
   <div id="scanner-container">
     <div id="reader"></div>
