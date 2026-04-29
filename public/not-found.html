@@ -15,46 +15,70 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       padding: 24px 20px;
-      gap: 32px;
+      gap: 24px;
     }
 
-    .icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: #2a1f2a;
+    header {
+      width: 100%;
+      max-width: 480px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 32px;
+      gap: 12px;
     }
 
-    .message {
-      text-align: center;
+    header a { color: #7c8cf8; text-decoration: none; font-size: 15px; }
+    header h1 { font-size: 18px; font-weight: 600; color: #e0e0e0; }
+
+    .notice {
+      width: 100%;
+      max-width: 480px;
+      background: #1e1a2a;
+      border: 1px solid #3a2a5a;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
     }
 
-    .message h1 {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #f0f0f5;
+    .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .notice-text { font-size: 13px; color: #b0a0d0; line-height: 1.5; }
+    .notice-text strong { color: #d0c0f0; font-family: 'Courier New', monospace; word-break: break-all; }
+
+    form {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
-    .message p {
-      font-size: 15px;
+    label {
+      font-size: 13px;
       color: #8a8fa8;
-      line-height: 1.5;
+      display: block;
+      margin-bottom: 6px;
     }
+
+    input {
+      width: 100%;
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 16px;
+      color: #f0f0f5;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus { border-color: #7c8cf8; }
+    input[readonly] { color: #5a5f75; font-family: 'Courier New', monospace; font-size: 14px; }
 
     .btn {
-      display: block;
-      width: 100%;
-      max-width: 320px;
       padding: 16px;
-      background: #7c8cf8;
-      color: #fff;
       border: none;
       border-radius: 12px;
       font-size: 16px;
@@ -62,17 +86,89 @@
       cursor: pointer;
       text-align: center;
       text-decoration: none;
+      display: block;
+      width: 100%;
     }
 
-    .btn:active { background: #6070e8; }
+    .btn-primary { background: #7c8cf8; color: #fff; }
+    .btn-primary:active { background: #6070e8; }
+    .btn-primary:disabled { background: #3a3f5a; color: #6a6f88; cursor: default; }
+
+    .btn-secondary { background: #1a1d27; color: #c0c0d0; margin-top: 4px; }
+    .btn-secondary:active { background: #22263a; }
+
+    #error {
+      font-size: 13px;
+      color: #e07070;
+      text-align: center;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="icon">🔍</div>
-  <div class="message">
+  <header>
+    <a href="/">← Back</a>
     <h1>Product not found</h1>
-    <p>This barcode isn't in the database.<br>Try scanning again or check the barcode.</p>
+  </header>
+
+  <div class="notice">
+    <span class="notice-icon">🔍</span>
+    <div class="notice-text">
+      This barcode isn't in the database yet. Add the product name below to save it.
+      <br><br>Barcode: <strong id="barcode-display"></strong>
+    </div>
   </div>
-  <a href="/" class="btn">Scan Again</a>
+
+  <form id="form">
+    <div>
+      <label for="barcode">Barcode</label>
+      <input id="barcode" name="barcode" type="text" readonly />
+    </div>
+    <div>
+      <label for="name">Product name <span style="color:#e07070">*</span></label>
+      <input id="name" name="name" type="text" placeholder="e.g. Heinz Baked Beans 415g" autocomplete="off" required />
+    </div>
+    <div>
+      <label for="brand">Brand (optional)</label>
+      <input id="brand" name="brand" type="text" placeholder="e.g. Heinz" autocomplete="off" />
+    </div>
+    <p id="error">Something went wrong. Please try again.</p>
+    <button class="btn btn-primary" type="submit" id="submit-btn">Save Product</button>
+    <a href="/" class="btn btn-secondary">Scan Again</a>
+  </form>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const barcode = params.get('barcode') || '';
+    document.getElementById('barcode').value = barcode;
+    document.getElementById('barcode-display').textContent = barcode || '(unknown)';
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errorEl = document.getElementById('error');
+      const name = document.getElementById('name').value.trim();
+      const brand = document.getElementById('brand').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+      errorEl.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/manual-entry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ barcode, name, brand }),
+        });
+        if (!res.ok) throw new Error();
+        const p = new URLSearchParams({ name, brand, barcode });
+        window.location.href = '/success.html?' + p.toString();
+      } catch {
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Save Product';
+      }
+    });
+  </script>
 </body>
 </html>

@@ -49,7 +49,7 @@
         });
         window.location.href = '/success.html?' + params.toString();
       } else {
-        window.location.href = '/not-found.html';
+        window.location.href = '/not-found.html?barcode=' + encodeURIComponent(barcode);
       }
     } catch {
       overlay.classList.remove('active');

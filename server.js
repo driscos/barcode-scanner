@@ -80,6 +80,19 @@ app.post('/api/lookup', async (req, res) => {
   res.json({ found: true, product: inserted.rows[0] });
 });
 
+app.post('/api/manual-entry', async (req, res) => {
+  const { barcode, name, brand } = req.body;
+  if (!barcode || !name) return res.status(400).json({ error: 'barcode and name required' });
+
+  await pool.query(
+    `INSERT INTO products (barcode, name, brand)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (barcode) DO UPDATE SET name = EXCLUDED.name, brand = EXCLUDED.brand`,
+    [barcode, name, brand || null]
+  );
+  res.json({ ok: true });
+});
+
 app.get('/api/export/csv', async (req, res) => {
   const result = await pool.query(
     'SELECT barcode, name, brand, category, description, image_url, first_scanned_at, scan_count FROM products ORDER BY first_scanned_at DESC'
