@@ -1,0 +1,15 @@
+{
+  "name": "barcode-scanner",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16",
+    "express": "^4",
+    "pg": "^8"
+  }
+}

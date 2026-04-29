@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Product Found</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f1117;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+    }
+
+    .card {
+      background: #1a1d27;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px 12px;
+      color: #4caf82;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .badge::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf82;
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: contain;
+      background: #12141e;
+      display: block;
+    }
+
+    .product-image.hidden { display: none; }
+
+    .product-info {
+      padding: 20px;
+    }
+
+    .product-name {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #f0f0f5;
+      margin-bottom: 6px;
+    }
+
+    .product-brand {
+      font-size: 14px;
+      color: #8a8fa8;
+      margin-bottom: 4px;
+    }
+
+    .product-barcode {
+      font-size: 12px;
+      color: #5a5f75;
+      font-family: 'Courier New', monospace;
+    }
+
+    .btn {
+      display: block;
+      width: calc(100% - 40px);
+      margin: 20px auto;
+      padding: 16px;
+      background: #7c8cf8;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn:active { background: #6070e8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">Product saved</div>
+    <img id="product-image" class="product-image hidden" alt="Product image" />
+    <div class="product-info">
+      <div id="product-name" class="product-name">Unknown product</div>
+      <div id="product-brand" class="product-brand"></div>
+      <div id="product-barcode" class="product-barcode"></div>
+    </div>
+  </div>
+  <a href="/" class="btn">Scan Another</a>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    const brand = params.get('brand');
+    const image = params.get('image');
+    const barcode = params.get('barcode');
+
+    if (name) document.getElementById('product-name').textContent = name;
+    if (brand) document.getElementById('product-brand').textContent = brand;
+    if (barcode) document.getElementById('product-barcode').textContent = barcode;
+    if (image) {
+      const img = document.getElementById('product-image');
+      img.src = image;
+      img.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

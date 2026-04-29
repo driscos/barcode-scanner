@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Barcode Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f1117;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 16px 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #e0e0e0;
+    }
+
+    #scanner-container {
+      width: 100%;
+      max-width: 480px;
+      padding: 0 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    #reader {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #1a1d27;
+    }
+
+    /* Override html5-qrcode default styles */
+    #reader video { border-radius: 16px; }
+    #reader__scan_region { background: transparent !important; }
+    #reader__dashboard { background: #1a1d27 !important; padding: 12px !important; }
+    #reader__dashboard_section_swaplink { color: #7c8cf8 !important; }
+    #reader__status_span { color: #a0a0b0 !important; font-size: 13px !important; }
+    #reader__filescan_input { display: none; }
+
+    #status {
+      font-size: 14px;
+      color: #8a8fa8;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+    }
+    #overlay.active { display: flex; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255,255,255,0.15);
+      border-top-color: #7c8cf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #overlay p { font-size: 16px; color: #c0c0d0; }
+  </style>
+</head>
+<body>
+  <header>Barcode Scanner</header>
+
+  <div id="scanner-container">
+    <div id="reader"></div>
+    <p id="status">Point your camera at a barcode</p>
+  </div>
+
+  <div id="overlay">
+    <div class="spinner"></div>
+    <p>Looking up product…</p>
+  </div>
+
+  <script src="scanner.js"></script>
+</body>
+</html>
